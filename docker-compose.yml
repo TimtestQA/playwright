@@ -1,0 +1,75 @@
+version: '3.8'
+services:
+
+  login:
+    image: ui-test:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/workspace
+      - ./allure-results:/usr/workspace/result
+    command:
+      sh -c "BROWSER=$$BROWSER pytest -sv -o log_cli=true --alluredir=result -m login -n 4"
+    environment:
+      BROWSER: ${BROWSER}
+      ADMIN_LOGIN: ${ADMIN_LOGIN}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      FRIEND_LOGIN: ${FRIEND_LOGIN}
+      FRIEND_PASSWORD: ${FRIEND_PASSWORD}
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN}
+      TG_CHAT_ID: ${TG_CHAT_ID}
+      GH_PAGES_URL: ${GH_PAGES_URL}
+    tty: true
+
+  connect:
+    image: ui-test:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/workspace
+      - ./allure-results:/usr/workspace/result
+    command:
+      sh -c "BROWSER=$$BROWSER pytest -sv -o log_cli=true --alluredir=result -m connect -n 4"
+    environment:
+      BROWSER: ${BROWSER}
+      ADMIN_LOGIN: ${ADMIN_LOGIN}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      FRIEND_LOGIN: ${FRIEND_LOGIN}
+      FRIEND_PASSWORD: ${FRIEND_PASSWORD}
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN}
+      TG_CHAT_ID: ${TG_CHAT_ID}
+      GH_PAGES_URL: ${GH_PAGES_URL}
+    tty: true
+
+  negative:
+    image: ui-test:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/workspace
+      - ./allure-results:/usr/workspace/result
+    command:
+      sh -c "BROWSER=$$BROWSER pytest -sv -o log_cli=true --alluredir=result -m negative_login"
+    environment:
+      BROWSER: ${BROWSER}
+      ADMIN_LOGIN: ${ADMIN_LOGIN}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      FRIEND_LOGIN: ${FRIEND_LOGIN}
+      FRIEND_PASSWORD: ${FRIEND_PASSWORD}
+      TG_BOT_TOKEN: ${TG_BOT_TOKEN}
+      TG_CHAT_ID: ${TG_CHAT_ID}
+      GH_PAGES_URL: ${GH_PAGES_URL}
+    tty: true
+
+  report:
+    image: ui-test:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/usr/workspace
+    command: /bin/sh -c "ls -la && allure generate allure-results --clean -o allure-report"
+    working_dir: /usr/workspace 
